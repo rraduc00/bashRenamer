@@ -8,7 +8,6 @@
 
 
 #!/bin/bash
-
 printInfo() {
 	echo -e "For more ${purple}information${resetColor} and ${purpleIntensity}help${resetColor} please run renamer.sh ${lightYellow}-h${resetColor}."
 	echo -e "Developed by ${purpleIntensity}Razvan Raducu${resetColor}"
@@ -32,5 +31,29 @@ purple='\e[0;35m'
 resetColor='\e[0m'
 red='\e[0;31m'
 
-printInfo
-printHelp
+
+
+####### Main Algorithm ########
+if [ $# -eq 0 ]
+		then
+			echo -e "\nWrong usage.\nNo parameters received.\nAborting\n"
+			printInfo
+			exit 1
+	fi
+
+	while test -n "$1"; # True if string is not empty
+		do
+			case "$1" in
+				-h) printHelp;;
+				-p) echo "ppp";; 
+				-s)	echo "ssss";;
+				-r) echo "rrrr";;
+					# In r case, check whether parameters are atleast 4. -r expr repl file....
+				*) echo -e "Unknown argument: $1.\nAborting." 
+					exit 0 ;;
+			esac
+			shift
+		done
+
+
+################################
