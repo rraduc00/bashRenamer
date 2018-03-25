@@ -18,9 +18,11 @@ printHelp() {
 	echo -e "Usage v1. Run the script passing the highlighted parameters in order to achieve the following funcitonality:"
 	echo -e "renamer.sh ${lightYellow}-h${resetColor} Print this usage help."
 	echo -e "renamer.sh ${lightYellow}-p ${purple}[prefix] ${purpleIntensity}files${resetColor} to add preffix to ${purpleIntensity}files${resetColor} name. Example:"
-	echo "exaple in new line"
-	echo -e "${purple}color example PRINT${resetColor}"
-	
+	echo -e "\texaple in new line"
+	echo -e "renamer.sh ${lightYellow}-s ${purple}[suffix] ${purpleIntensity}files${resetColor} to add suffix to ${purpleIntensity}files${resetColor} name. Example:"
+	echo -e "\texaple in new line"
+	echo -e "renamer.sh ${lightYellow}-r ${purple}[expression] ${red}[replacement] ${purpleIntensity}files${resetColor} to replace a pattern within the ${purpleIntensity}files${resetColor} names. Example:"
+	echo -e "\texaple in new line"
 }
 
 
@@ -28,6 +30,7 @@ lightYellow='\e[93m'
 purpleIntensity='\e[0;95m'
 purple='\e[0;35m'
 resetColor='\e[0m'
+red='\e[0;31m'
 
 printInfo
 printHelp
