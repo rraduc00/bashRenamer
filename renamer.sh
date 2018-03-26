@@ -34,14 +34,22 @@ executeOption() {
 			echo "ENTERED for the $selectedOption option with $1 argument"
 		else 
 			echo -e "Unknown argument: ${lightYellow}$1${resetColor} is not a directory not a file.\n Aborting"		
+			exit 1
 	fi
 
 	case "$selectedOption" in
 		p) echo "executeOption is p"
-			selectedOption=0 ### IMPORTANT TO RESET THE FLAG
+			
 			;;
-		s) echo "executeOption is r";;
-		r) echo "executeOption is s";;
+
+		s) echo "executeOption is s"
+			
+			;;
+
+		r) echo "executeOption is r"
+			
+			;;
+
 	esac
 
 }
@@ -54,10 +62,24 @@ checkOptionsArgumentsLength(){
 					printInfo
 					echo -e "\nAborting."
 					exit 1
+			fi
+			;;
+		s) if [ ! $1 -gt 1  ]
+				then
+					echo -e "The option ${lightYellow}-$selectedOption${resetColor} needs atleast 2 arguments. ${purple}[suffix] ${purpleIntensity}files${resetColor}"
+					printInfo
+					echo -e "\nAborting."
+					exit 1
+			fi
+			;;
+		r) if [ ! $1 -gt 2  ]
+				then
+					echo -e "The option ${lightYellow}-$selectedOption${resetColor} needs atleast 3 arguments. ${purple}[expression] ${red}[replacement] ${purpleIntensity}files${resetColor}"
+					printInfo
+					echo -e "\nAborting."
+					exit 1
 				fi
 			;;
-		s) echo "executeOption is r";;
-		r) echo "executeOption is s";;
 	esac
 }
 
@@ -82,7 +104,7 @@ if [ $# -eq 0 ]
 			echo -e "\nWrong usage.\nNo parameters received.\nAborting\n"
 			printInfo
 			exit 1
-	fi
+fi
 
 	while test -n "$1"; # True if string is not empty
 		do
@@ -91,43 +113,37 @@ if [ $# -eq 0 ]
 
 
 				-p) selectedOption=p
-					##Pendiente hacer shift para asignar los registros del preifijo
+					shift
+					checkOptionsArgumentsLength $#
 					;;
 
 
 				-s)	selectedOption=s
-					
+					shift
+					checkOptionsArgumentsLength $#
 					;;
 
 				-r) selectedOption=r
-					
+					shift
+					checkOptionsArgumentsLength $#
 					;;
 					# In r case, check whether parameters are atleast 4. -r expr repl file....
 				
-				*) 
-					if [ "$selectedOption" == 0 ]
+				*) 	auxiliar=$1
+					if [ "$selectedOption" == 0 ] || [ ${auxiliar:0:1} = '-' ]
 						then 
-							echo -e "Unknown argument: $1.\nAborting." 
+							echo -e "Unknown argument: ${lightYellow}$1${resetColor}.\nAborting." 
 							exit 1 
 					fi
 
 					
 
 					executeOption $1;
-
+					shift
 					;;
 
 
 
 			esac 
-			shift
-			checkOptionsArgumentsLength $#
-			
+			#
 		done
-
-############################
-# Pendiente: Decidir qué modelo de shift se va a implementar. Encontrar una forma adecuada
-# de comprobar el número de parámetros, de hacer shift y de asignar a los positional parameters $1, $2, $3... etc
-# los valores correcto así como suffix, preffix, etc... mientras se limpian los registros
-# tras cada operación.
-################################
