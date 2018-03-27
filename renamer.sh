@@ -1,13 +1,13 @@
 #	Razvan Raducu			
 #	El programa:
 #	· Puede recibir múltiples opciones con múltiples argumentos. Por ejemplo:  
-#			./renamer.sh -p preffix file1 file2 file3 -s suffix file4 file5 -r expression replacemen file6 file7
+#			./renamer.sh -p preffix file1 file2 file3 -s suffix file4 file5 -r expression replacement file6 file7
 #	· Puede trabajar con ficheros dashed (que empiezan por guión).
 #			./renamer.sh -p PREFF ./-testFile resultará en cambiar de nombre -testFile a PREFF-testFile. 
 #				(Se debe indicar el fichero con la ruta completa (./) para que el programa no lo interprete como opción)
 #		De la misma forma:
 #			./renamer.sh -s SUFF ./-testfile resultará en cambiar de nombre -testFile a -testFileSUFF.	
-#	·
+#	· Al reemplazar la expresión, reemplaza todas las ocurrencias de la misma en el nombre del fichero.
 #####				
 
 
@@ -46,11 +46,15 @@ executeOption() {
 			# Basename is used to get the base name of the file. So ./-testFile becomes -testFile. This formula avoids
 			# errors when executing something like ./renamer.sh -p PREFF ./-testFile. If 'basename' isn't used, error
 			# "cant move PREFF./-testFile. File or directory not found" is prompted. 
-		p) mv -- "$1" "${preffix}$(basename $1)"
+		p) mv -- "$1" "${preffix}$(basename $1)" ;;
 
-		s) mv "$1" "$1${suffix}" ##PREGUNTA: Debe funcionar con espacios?? Debe funcionar con dashed files??
+		s) mv "$1" "$1${suffix}" ;; ##PREGUNTA: Debe funcionar con espacios?? Debe funcionar con dashed files??
 
-		r) echo "executeOption is r"
+		r) rename s/$expression/$replacement/g "$1" ##PREGUNTA: Estoy trabajando con rename, con sed no me funciona. Va a estar rename instalado o le pongo un sudo-apt
+
+		#sed "s/$auxExpression/$auxReplacement/g" "$1"
+
+		echo "executeOption is r" ##PREGUNTA: Se refiere a expresiones regurales?
 			echo "expression is: $expression"
 			echo "replacement is: ${replacement}"
 			echo "Arguments are: $@"	
