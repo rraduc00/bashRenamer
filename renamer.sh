@@ -1,8 +1,12 @@
 #	Razvan Raducu			
 #	El programa:
-#	· Puede recibir múltiples argumentos 
-#	·
-#	·
+#	· Puede recibir múltiples opciones con múltiples argumentos. Por ejemplo:  
+#			./renamer.sh -p preffix file1 file2 file3 -s suffix file4 file5 -r expression replacemen file6 file7
+#	· Puede trabajar con ficheros dashed (que empiezan por guión).
+#			./renamer.sh -p PREFF ./-testFile resultará en cambiar de nombre -testFile a PREFF-testFile. 
+#				(Se debe indicar el fichero con la ruta completa (./) para que el programa no lo interprete como opción)
+#		De la misma forma:
+#			./renamer.sh -s SUFF ./-testfile resultará en cambiar de nombre -testFile a -testFileSUFF.	
 #	·
 #####				
 
@@ -37,17 +41,19 @@ executeOption() {
 			exit 1
 	fi
 
-	case "$selectedOption" in
-		p) echo "executeOption is p"
-			
-			;;
+	case "$selectedOption" in ## PREGUNTA: Estaría bien imprimir unos logs por pantalla para ver qué se ha cambiado y qué no?
+		
+			# Basename is used to get the base name of the file. So ./-testFile becomes -testFile. This formula avoids
+			# errors when executing something like ./renamer.sh -p PREFF ./-testFile. If 'basename' isn't used, error
+			# "cant move PREFF./-testFile. File or directory not found" is prompted. 
+		p) mv -- "$1" "${preffix}$(basename $1)"
 
-		s) echo "executeOption is s"
-			
-			;;
+		s) mv "$1" "$1${suffix}" ##PREGUNTA: Debe funcionar con espacios?? Debe funcionar con dashed files??
 
 		r) echo "executeOption is r"
-			
+			echo "expression is: $expression"
+			echo "replacement is: ${replacement}"
+			echo "Arguments are: $@"	
 			;;
 
 	esac
@@ -115,22 +121,29 @@ fi
 				-p) selectedOption=p
 					shift
 					checkOptionsArgumentsLength $#
+					preffix=$1
+					shift
 					;;
 
 
 				-s)	selectedOption=s
 					shift
 					checkOptionsArgumentsLength $#
+					suffix=$1
+					shift
 					;;
 
 				-r) selectedOption=r
 					shift
 					checkOptionsArgumentsLength $#
+					expression=$1
+					replacement=$2
+					shift 2
 					;;
 					# In r case, check whether parameters are atleast 4. -r expr repl file....
 				
-				*) 	auxiliar=$1
-					if [ "$selectedOption" == 0 ] || [ ${auxiliar:0:1} = '-' ]
+				*) 	
+					if [ "$selectedOption" == 0 ] || [ ${1:0:1} = '-' ]
 						then 
 							echo -e "Unknown argument: ${lightYellow}$1${resetColor}.\nAborting." 
 							exit 1 
