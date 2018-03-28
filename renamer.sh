@@ -8,6 +8,7 @@
 #		De la misma forma:
 #			./renamer.sh -s SUFF ./-testfile resultará en cambiar de nombre -testFile a -testFileSUFF.	
 #	· Al reemplazar la expresión, reemplaza todas las ocurrencias de la misma en el nombre del fichero.
+#	· Es capaz de funcionar con ficheros que contienen espacios en el nombre.
 #####				
 
 
@@ -21,19 +22,20 @@ printInfo() {
 }
 
 printHelp() {
-	echo -e "Usage v1. Run the script passing the highlighted parameters in order to achieve the following funcitonality:"
+	echo -e "Run the script passing the highlighted parameters in order to achieve the following funcitonality:"
 	echo -e "renamer.sh ${lightYellow}-h${resetColor} Print this usage help."
 	echo -e "renamer.sh ${lightYellow}-p ${purple}[prefix] ${purpleIntensity}files${resetColor} to add preffix to ${purpleIntensity}files${resetColor} name. Example:"
-	echo -e "\texaple in new line"
+	echo -e "\trenamer.sh ${lightYellow}-p ${purple}OLD ${purpleIntensity}file1 file2 file3 ${resetColor}"
 	echo -e "renamer.sh ${lightYellow}-s ${purple}[suffix] ${purpleIntensity}files${resetColor} to add suffix to ${purpleIntensity}files${resetColor} name. Example:"
-	echo -e "\texaple in new line"
+	echo -e "\trenamer.sh ${lightYellow}-s ${purple}BCKP ${purpleIntensity}file4 file5 file6 ${resetColor}"
 	echo -e "renamer.sh ${lightYellow}-r ${purple}[expression] ${red}[replacement] ${purpleIntensity}files${resetColor} to replace a pattern within the ${purpleIntensity}files${resetColor} names. Example:"
-	echo -e "\texaple in new line"
+	echo -e "\trenamer.sh ${lightYellow}-r ${purple}F0000 ${red}NEW ${purpleIntensity}F0000photo1 F0000photo2${resetColor}"
+	exit 0
 }
 
 executeOption() {
 
-	if [ -d $1 ] || [ -f $1 ] 
+	if [ -d "$1" ] || [ -f "$1" ] 
 		then
 			echo "ENTERED for the $selectedOption option with $1 argument"
 		else 
@@ -41,23 +43,18 @@ executeOption() {
 			exit 1
 	fi
 
-	case "$selectedOption" in ## PREGUNTA: Estaría bien imprimir unos logs por pantalla para ver qué se ha cambiado y qué no?
+	case "$selectedOption" in 
 		
 			# Basename is used to get the base name of the file. So ./-testFile becomes -testFile. This formula avoids
 			# errors when executing something like ./renamer.sh -p PREFF ./-testFile. If 'basename' isn't used, error
 			# "cant move PREFF./-testFile. File or directory not found" is prompted. 
-		p) mv -- "$1" "${preffix}$(basename $1)" ;;
+		p) mv -- \"$1\" \"${preffix}$(basename "$1")\" ;;
 
 		s) mv "$1" "$1${suffix}" ;; ##PREGUNTA: Debe funcionar con espacios?? Debe funcionar con dashed files??
 
-		r) rename s/$expression/$replacement/g "$1" ##PREGUNTA: Estoy trabajando con rename, con sed no me funciona. Va a estar rename instalado o le pongo un sudo-apt
+		r) rename s/$expression/$replacement/g "$1" #FIXME No he sido capaz de hacerlo funcionar con sed
+		#FIXME sed "s/$auxExpression/$auxReplacement/g" "$1"
 
-		#sed "s/$auxExpression/$auxReplacement/g" "$1"
-
-		echo "executeOption is r" ##PREGUNTA: Se refiere a expresiones regurales?
-			echo "expression is: $expression"
-			echo "replacement is: ${replacement}"
-			echo "Arguments are: $@"	
 			;;
 
 	esac
@@ -119,7 +116,8 @@ fi
 	while test -n "$1"; # True if string is not empty
 		do
 			case "$1" in
-				-h) printHelp;;
+				-h) printHelp
+					;;
 
 
 				-p) selectedOption=p
@@ -155,7 +153,7 @@ fi
 
 					
 
-					executeOption $1;
+					executeOption "$1";
 					shift
 					;;
 
