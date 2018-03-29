@@ -35,26 +35,24 @@ printHelp() {
 
 executeOption() {
 
-	if [ -d "$1" ] || [ -f "$1" ] 
+	if [ ! -d "$1" ] && [ ! -f "$1" ] 
 		then
-			echo "ENTERED for the $selectedOption option with $1 argument"
-		else 
-			echo -e "Unknown argument: ${lightYellow}$1${resetColor} is not a directory not a file.\n Aborting"		
+			echo -e "Unknown argument: ${lightYellow}$1${resetColor} is not a directory nor a file.\nAborting"		
 			exit 1
 	fi
 
+	pathToFile=$(dirname "$1")
+	fileName=$(basename "$1")
+
 	case "$selectedOption" in 
 		
-			# Basename is used to get the base name of the file. So ./-testFile becomes -testFile. This formula avoids
-			# errors when executing something like ./renamer.sh -p PREFF ./-testFile. If 'basename' isn't used, error
-			# "cant move PREFF./-testFile. File or directory not found" is prompted. 
-		p) mv -- \"$1\" \"${preffix}$(basename "$1")\" ;;
+		p) mv -- "$1" "${pathToFile}/${preffix}${fileName}" ;;
 
-		s) mv "$1" "$1${suffix}" ;; ##PREGUNTA: Debe funcionar con espacios?? Debe funcionar con dashed files??
+		s) mv -- "$1" "${pathToFile}/${fileName}${suffix}" ;; ##PREGUNTA: Debe funcionar con espacios?? Debe funcionar con dashed files??
 
-		r) rename s/$expression/$replacement/g "$1" #FIXME No he sido capaz de hacerlo funcionar con sed
-		#FIXME sed "s/$auxExpression/$auxReplacement/g" "$1"
-
+		r) newFileName=$(echo ${fileName} | sed s/$expression/$replacement/g)  #FIXME No he sido capaz de hacerlo funcionar con sed
+			mv "$1" "${pathToFile}/${newFileName}"
+			
 			;;
 
 	esac
