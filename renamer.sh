@@ -7,8 +7,13 @@
 #				(Se debe indicar el fichero con la ruta completa (./) para que el programa no lo interprete como opción)
 #		De la misma forma:
 #			./renamer.sh -s SUFF ./-testfile resultará en cambiar de nombre -testFile a -testFileSUFF.	
-#	· Al reemplazar la expresión, reemplaza todas las ocurrencias de la misma en el nombre del fichero.
-#	· Es capaz de funcionar con ficheros que contienen espacios en el nombre.
+#	· Al reemplazar la expresión, reemplaza todas las ocurrencias de la misma en el nombre del fichero. (/g (global) al final)
+#	· Es capaz de funcionar con ficheros y directorios que contienen espacios en el nombre.
+#	· Es capaz de funcionar con ficheros y directorios cuyo nombre comienza por '-' (dash).
+# 	· El programa hace control de errores y de parámetros. En caso de que el comando introducido por el usuario sea incorrecto
+#		o no tenga los argumentos necesarios para las opciones especificadas, el programa lo notifica con detalle.
+#	· El programa contiene ayuda al usuario "usage" con ejemplos, colores e invita al usuario a leer esta ayuda cada vez que
+#		un comando insertado es incorrecto.
 #####				
 
 
